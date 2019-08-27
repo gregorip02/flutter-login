@@ -5,6 +5,10 @@
 
 Una aplicación de flutter que integra un sistema de autenticación basado en JWT.
 
+## Scrrenshots
+![Login screen](./images/screenshots/Screenshot_1566925891.png)
+![Register screen](./images/screenshots/Screenshot_1566925893.png)
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.

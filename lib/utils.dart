@@ -26,3 +26,20 @@ bool inReleaseMode() => buildMode() == 'release';
 String getBaseUri() =>
   inReleaseMode() ?
     'https://example.com' : 'http://192.168.2.101:3000';
+
+// Una simple validación de emails
+// Fuente: https://medium.com/@nitishk72/form-validation-in-flutter-d762fbc9212c
+String validateEmail(String value) {
+  final Pattern pattern =
+    r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+
+  final RegExp regex = new RegExp(pattern);
+
+  return regex.hasMatch(value) ?
+    null : 'Introduce un email valido';
+}
+
+String moreThan(num expectedLength, num valueLength) {
+  return valueLength < expectedLength ?
+    'Debe tener al menos $expectedLength caracteres' : null;
+}
