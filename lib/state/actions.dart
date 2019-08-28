@@ -11,7 +11,10 @@ import 'package:flutter_jwt_login/models/user.dart';
 // See https://redux.js.org/basics/actions#actions
 
 // Login actions
-class LoginAction extends Action {}
+class LoginAction extends Action {
+  final Map credentials;
+  LoginAction(this.credentials);
+}
 class LoginFailedAction extends Action {}
 class LoginSuccessAction extends Action {
   final User user;
@@ -19,13 +22,15 @@ class LoginSuccessAction extends Action {
 }
 
 // Register actions
-class RegisterAction extends Action {}
+class RegisterAction extends Action {
+  final Map credentials;
+  RegisterAction(this.credentials);
+}
 class RegisterFailedAction extends Action {}
 class RegisterSuccessAction extends Action {
   final User user;
   RegisterSuccessAction(this.user);
 }
-
 
 // Todos Action
 class ObtainingTodosAction extends Action {}

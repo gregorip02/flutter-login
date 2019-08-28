@@ -25,7 +25,7 @@ bool inReleaseMode() => buildMode() == 'release';
 // no incluya el slash final (/)
 String getBaseUri() =>
   inReleaseMode() ?
-    'https://example.com' : 'http://192.168.2.101:3000';
+    'https://example.com' : 'http://10.42.0.1:3000';
 
 // Una simple validación de emails
 // Fuente: https://medium.com/@nitishk72/form-validation-in-flutter-d762fbc9212c

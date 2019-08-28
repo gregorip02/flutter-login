@@ -13,7 +13,7 @@ class LayoutApp extends StatelessWidget {
     return ViewModelSubscriber<AppState, bool>(
       converter: (AppState state) => state.hasUser(),
       builder: (BuildContext context, DispatchFunction dispatch, bool hasUser)
-        => hasUser ? HomePage() : AuthPage()
+        => hasUser ? HomePage() : AuthScreen()
     );
   }
 }

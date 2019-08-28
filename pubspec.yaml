@@ -68,7 +68,7 @@ flutter:
   fonts:
     - family: Lobster
       fonts:
-        - asset: fonts/Lobster-Regular.ttf
+        - asset: fonts/Lobster.ttf
         - weight: 700
 
   #   - family: Trajan Pro

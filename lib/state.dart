@@ -19,9 +19,21 @@ class AppState {
   // offline   => Funcionando con datos offline
   final String networkStatus;
 
+  factory AppState.initialState() => AppState();
+
   AppState({ this.user, this.todos = const [], this.networkStatus });
 
-  factory AppState.initialState() => AppState();
+  AppState copyWith({ List<Todo> todos, String networkStatus }) {
+    return AppState(
+      todos: todos ?? this.todos,
+      networkStatus: networkStatus ?? this.networkStatus
+    );
+  }
+
+  AppState isLoading() => copyWith(networkStatus: 'loading');
+  AppState isOffline() => copyWith(networkStatus: 'offline');
+
+  AppState withUser(User user) => AppState(user: user);
 
   bool hasUser() => user.runtimeType == User;
 }
