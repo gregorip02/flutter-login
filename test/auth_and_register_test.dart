@@ -21,13 +21,13 @@ void main() {
   };
 
   test('Autenticando usuario con credenciales correctas.', () async {
-    final user = await repository.login(usuarioConCredencialesCorrectas);
+    final user = await repository.auth('login', usuarioConCredencialesCorrectas);
     assert(user.runtimeType == User);
   });
 
   test('Autenticando usuario con credenciales incorrectas.', () async {
     try {
-      final user = await repository.login(usuarioConCredencialesIncorrectas);
+      final user = await repository.auth('login', usuarioConCredencialesIncorrectas);
       assert(user.runtimeType != User);
     } catch (statusCode) {
       assert(statusCode == 401);
@@ -36,7 +36,7 @@ void main() {
 
   test('Autenticando usuario no registrado.', () async {
     try {
-      final user = await repository.login(usuarioNoRegistrado);
+      final user = await repository.auth('login', usuarioNoRegistrado);
       assert(user.runtimeType != User);
     } catch (statusCode) {
       assert(statusCode == 404);

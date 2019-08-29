@@ -173,26 +173,26 @@ class _AuthScreenState extends State<AuthScreen> {
     return Padding(
       padding: EdgeInsets.only(top: 10),
       child: ViewModelSubscriber<AppState, bool>(
-        converter: (AppState state) => state.hasLoading(),
-        builder:
-          (BuildContext context, DispatchFunction dispatch, bool loading) {
-            return CupertinoButton(
-              color: loading ? Colors.grey : Colors.blue,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Text('Continuar', textAlign: TextAlign.center)
-                  )
-                ]
-              ),
-              onPressed: () => loading ? null : _onSubmitPressed(dispatch),
-            );
+        converter: (state) => state.hasLoading(),
+        builder: (context, dispatch, loading) {
+          return CupertinoButton(
+            color: loading ? Colors.grey : Colors.blue,
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text('Continuar', textAlign: TextAlign.center)
+                )
+              ]
+            ),
+            onPressed: ()
+              => loading ? null : _onSubmitPressed(context, dispatch),
+          );
         }
       )
     );
   }
 
-  void _onSubmitPressed(DispatchFunction dispatch) {
+  void _onSubmitPressed(BuildContext context, DispatchFunction dispatch) {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       dispatch(AuthAction(
@@ -255,7 +255,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 child: Image.asset('images/jwt.png',
                   height: screenHeight * 0.20)
               ),
-              _loginContainer(screenHeight, screenWidth),
+              _loginContainer(screenHeight, screenWidth)
             ]
           )
         )

@@ -1,9 +1,9 @@
 import 'dart:io';
+import 'utils.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_jwt_login/models/user.dart';
-import 'utils.dart';
 
 class BaseRepository {
   final String baseUri = getBaseUri();
@@ -38,13 +38,15 @@ class AuthRepository extends BaseRepository {
         return Future.error(null);
       }
     );
-
+    
     final Map decoded = json.decode(res.body);
 
     // Las respuestas del backend API exitosas pueden variar entre
     // 200 y 201, para login o registro, respectivamente.
     if (res.statusCode == 200 || res.statusCode == 201) {
       final User user = User.fromJson(decoded['user'])..setToken(decoded['token']);
+      // Guardando la sessión localmente.
+      user.setOffline(user);
       return user;
     }
 
