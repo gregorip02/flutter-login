@@ -30,10 +30,11 @@ class AppState {
     );
   }
 
-  AppState isLoading() => copyWith(networkStatus: 'loading');
-  AppState isOffline() => copyWith(networkStatus: 'offline');
-
   AppState withUser(User user) => AppState(user: user);
+  AppState withLoading() => copyWith(networkStatus: 'loading');
+  AppState withFailed() => copyWith(networkStatus: 'failed');
 
   bool hasUser() => user.runtimeType == User;
+  bool hasLoading() => networkStatus == 'loading';
+  bool hasFailed() => networkStatus == 'failed';
 }

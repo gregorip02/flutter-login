@@ -10,27 +10,19 @@ import 'package:flutter_jwt_login/models/user.dart';
 //
 // See https://redux.js.org/basics/actions#actions
 
-// Login actions
-class LoginAction extends Action {
+// Auth actions
+class AuthAction extends Action {
+  final String endpoint;
   final Map credentials;
-  LoginAction(this.credentials);
+  AuthAction(this.endpoint, this.credentials);
 }
-class LoginFailedAction extends Action {}
-class LoginSuccessAction extends Action {
+class AuthFailedAction extends Action {}
+class AuthSuccessAction extends Action {
   final User user;
-  LoginSuccessAction(this.user);
+  AuthSuccessAction(this.user);
 }
 
-// Register actions
-class RegisterAction extends Action {
-  final Map credentials;
-  RegisterAction(this.credentials);
-}
-class RegisterFailedAction extends Action {}
-class RegisterSuccessAction extends Action {
-  final User user;
-  RegisterSuccessAction(this.user);
-}
+class LogoutAction extends Action {}
 
 // Todos Action
 class ObtainingTodosAction extends Action {}

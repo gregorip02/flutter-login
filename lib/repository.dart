@@ -24,26 +24,30 @@ class BaseRepository {
 }
 
 class AuthRepository extends BaseRepository {
-  Future<User> _loginOrRegister(String endpoint, Map credentials) {
-    return Future.delayed(Duration(seconds: 5), () async {
-      final res = await http.post('$baseUri/login',
-        headers: defaultHeaders, body: credentials).timeout(
-        Duration(seconds: 20), onTimeout: () {
-          return Future.error(null);
-        }
-      );
+  Future<User> auth(String endpoint, Map credentials) async {
+    if (buildMode() != 'release') {
+      // Para mi entorno local, el backend API esta en localhost,
+      // así que tendré que hacer una pequeña pausa para
+      // simular una petición a Internet.
+      await Future.delayed(Duration(seconds: 5));
+    }
 
-      final Map decoded = json.decode(res.body);
-
-      if (res.statusCode == 200) {
-        final User user = User.fromJson(decoded['user']).setToken(decoded['token']);
-        return user;
+    final res = await http.post('$baseUri/$endpoint',
+      headers: defaultHeaders, body: credentials).timeout(
+      Duration(seconds: 20), onTimeout: () {
+        return Future.error(null);
       }
+    );
 
-      return Future.error(res.statusCode);
-    });
+    final Map decoded = json.decode(res.body);
+
+    // Las respuestas del backend API exitosas pueden variar entre
+    // 200 y 201, para login o registro, respectivamente.
+    if (res.statusCode == 200 || res.statusCode == 201) {
+      final User user = User.fromJson(decoded['user'])..setToken(decoded['token']);
+      return user;
+    }
+
+    return Future.error(res.statusCode);
   }
-
-  Future<User> login(Map credentials) => _loginOrRegister('login', credentials);
-  Future<User> register(Map credentials) => _loginOrRegister('register', credentials);
 }

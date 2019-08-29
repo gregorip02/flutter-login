@@ -13,10 +13,17 @@ class AuthBloc extends SimpleBloc<AppState> {
   // See https://redux.js.org/basics/reducers#reducers
   @override
   AppState reducer(AppState state, Action action) {
-    if (action is LoginAction) {
-      return state.isLoading();
-    } else if (action is LoginSuccessAction) {
+    if (action is AuthAction) {
+      return state.withLoading();
+    }
+    else if (action is AuthSuccessAction) {
       return state.withUser(action.user);
+    }
+    else if (action is AuthFailedAction) {
+      return state.withFailed();
+    }
+    else if (action is LogoutAction) {
+      return AppState.initialState();
     }
 
     return state;
@@ -24,11 +31,11 @@ class AuthBloc extends SimpleBloc<AppState> {
 
   @override
   FutureOr<Action> afterware(DispatchFunction dispatch, AppState state, Action action) {
-    if (action is LoginAction) {
-      repository.login(action.credentials).then((User user) {
-        dispatch(LoginSuccessAction(user));
-      }).catchError((err) {
-        print(err);
+    if (action is AuthAction) {
+      repository.auth(action.endpoint, action.credentials).then((User user) {
+        dispatch(AuthSuccessAction(user));
+      }).catchError((responseCode) {
+        dispatch(AuthFailedAction());
       });
     }
 

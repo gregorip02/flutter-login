@@ -21,9 +21,7 @@ class User {
     );
   }
 
-  User setToken(String token) {
-    return copyWith(token: token);
-  }
+  User setToken(String token) => copyWith(token: token);
 
   bool isAuth() => this.token.isNotEmpty;
 }
