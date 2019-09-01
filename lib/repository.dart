@@ -32,24 +32,26 @@ class AuthRepository extends BaseRepository {
       await Future.delayed(Duration(seconds: 5));
     }
 
-    final res = await http.post('$baseUri/$endpoint',
+    final request = await http.post('$baseUri/$endpoint',
       headers: defaultHeaders, body: credentials).timeout(
       Duration(seconds: 20), onTimeout: () {
-        return Future.error(null);
+        return Future.error('Tiempo agotado en la petición');
       }
     );
-    
-    final Map decoded = json.decode(res.body);
+
+    final Map decoded = json.decode(request.body);
 
     // Las respuestas del backend API exitosas pueden variar entre
     // 200 y 201, para login o registro, respectivamente.
-    if (res.statusCode == 200 || res.statusCode == 201) {
-      final User user = User.fromJson(decoded['user'])..setToken(decoded['token']);
+    if (request.statusCode == 200 || request.statusCode == 201) {
+      final User user = User.fromJson(decoded['user']).copyWith(
+        token: decoded['token']
+      );
       // Guardando la sessión localmente.
-      user.setOffline(user);
+      User.setOffline(user);
       return user;
     }
 
-    return Future.error(res.statusCode);
+    return Future.error(decoded['message']);
   }
 }

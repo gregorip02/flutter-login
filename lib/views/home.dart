@@ -3,31 +3,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_jwt_login/state.dart';
 import 'package:flutter_jwt_login/models/user.dart';
 
-class HomePage extends StatelessWidget {
+class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ViewModelSubscriber<AppState, User>(
-      converter: (state) => state.user,
-      builder: (context, dispatch, user) {
-        return Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Hola \n${user.name}',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.display1
-                ),
-                RaisedButton(
-                  child: Text('Salir'),
-                  onPressed: () => dispatch(LogoutAction()),
-                  color: Colors.blue
-                )
-              ]
-            )
-          )
-        );
-      }
+    final AppStore store = Provider.of<AppStore>(context);
+    final AppState state = store.state;
+
+    return Scaffold(
+      body: Center(
+        child: Text('Hola \n${state.user.name}',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.display1),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.exit_to_app),
+        onPressed: () {
+          // Drop the user offline credentials
+          User.dropOffline();
+          store.setState(
+            // Generate a new state with empty user
+            state.copyWith(user: User())
+          );
+        }
+      )
     );
   }
 }

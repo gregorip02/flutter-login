@@ -30,13 +30,13 @@ dependencies:
   # A composable, Future-based library for making HTTP requests.
   http: ^0.12.0+2
 
-  # A state management library for Flutter that combines aspects of Redux and BLoC
-  rebloc: ^0.3.0+1
+  # A mixture between dependency injection (DI) and state management,
+  # built with widgets for widgets.
+  provider: ^3.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

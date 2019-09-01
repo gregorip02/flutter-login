@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_jwt_login/utils.dart';
 import 'package:flutter_jwt_login/state.dart';
-import 'package:flutter/cupertino.dart'
-  show CupertinoButton, CupertinoSegmentedControl;
+import 'package:flutter_jwt_login/repository.dart';
 
 class AuthScreen extends StatefulWidget {
   @override
@@ -14,6 +14,10 @@ class _AuthScreenState extends State<AuthScreen> {
   // nuestro widget Form
   // @var GlobalKey
   final _formKey = GlobalKey<FormState>();
+
+  // Indicador de progreso en peticiones al servidor
+  // @var bool
+  bool _progressAuth = false;
 
   // El valor por defecto de la barra segmentada.
   // @var String
@@ -73,6 +77,7 @@ class _AuthScreenState extends State<AuthScreen> {
     return <Widget>[
       TextFormField(
         maxLines: 1,
+        readOnly: _progressAuth,
         keyboardType: TextInputType.emailAddress,
         initialValue: _formValues['email'],
         validator: (val) => validateEmail(val), // See utils.dart
@@ -87,6 +92,7 @@ class _AuthScreenState extends State<AuthScreen> {
       TextFormField(
         maxLines: 1,
         obscureText: true,
+        readOnly: _progressAuth,
         initialValue: _formValues['password'],
         validator: (val) => moreThan(6, val.length),
         onSaved: (val) => _setFormValue('password', val),
@@ -112,6 +118,7 @@ class _AuthScreenState extends State<AuthScreen> {
           maxLines: 1,
           keyboardType: TextInputType.text,
           initialValue: _formValues['name'],
+          readOnly: _progressAuth,
           validator: (val) => moreThan(6, val.length),
           onSaved: (val) => _setFormValue('name', val),
           decoration: InputDecoration(
@@ -172,36 +179,61 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget _submitButton(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(top: 10),
-      child: ViewModelSubscriber<AppState, bool>(
-        converter: (state) => state.hasLoading(),
-        builder: (context, dispatch, loading) {
-          return CupertinoButton(
-            color: loading ? Colors.grey : Colors.blue,
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Text('Continuar', textAlign: TextAlign.center)
-                )
-              ]
-            ),
-            onPressed: ()
-              => loading ? null : _onSubmitPressed(context, dispatch),
-          );
-        }
-      )
+      child: CupertinoButton(
+        color: _progressAuth ? Colors.grey : Colors.blue,
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: Text('Continuar', textAlign: TextAlign.center)
+            )
+          ]
+        ),
+        onPressed: () => _progressAuth ? null : _onSubmitPressed(context)
+      ),
     );
   }
 
-  void _onSubmitPressed(BuildContext context, DispatchFunction dispatch) {
+  void _onSubmitPressed(BuildContext context) {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      dispatch(AuthAction(
-        // El endpoint del backend ejm: http://example.com/(login|register)
+      final AuthRepository repository = AuthRepository();
+      final AppStore store = Provider.of<AppStore>(context);
+
+      setState(() => _progressAuth = true);
+      repository.auth(
         _cupertinoSegmentedControlValue,
-        // Las credenciales: email, password and name.
         _formValues
-      ));
+      ).then((user) {
+        store.setState(
+          // Add a new user to state
+          store.state.copyWith(user: user)
+        );
+      }).catchError((err) {
+        _showErrorDialog(context, err.toString());
+      },
+      test: (err) => err.runtimeType == String
+      ).whenComplete(() {
+        setState(() => _progressAuth = false);
+      });
     }
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Tenemos un problema'),
+          content: Text(message),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Aceptar'),
+              onPressed: () => Navigator.of(context).pop()
+            )
+          ],
+        );
+      }
+    );
   }
 
   // El contenedor de todo el esqueleto de login.

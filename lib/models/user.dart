@@ -6,7 +6,7 @@ class User {
   final String email;
   final String token;
 
-  User({ this.name, this.email, this.token });
+  User({ this.name = '', this.email = '', this.token = '' });
 
   factory User.fromJson(Map json) {
     return User(
@@ -18,24 +18,46 @@ class User {
 
   User copyWith({ String name, String email, String token }) {
     return User(
-      name: this.name ?? name,
-      email: this.email ?? email,
-      token: this.token ?? token
+      name: name ?? this.name,
+      email: email ?? this.email,
+      token: token ?? this.token
     );
   }
 
-  void setOffline(User user) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('user', user.toString());
+  Map toMap() {
+    return {
+      'name': this.name, 'email': this.email, 'token': this.token
+    };
   }
 
-  Future<User> getOffline() async {
+  static void setOffline(User user) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final Map decoded = json.decode(prefs.getString('user'));
-    return User.fromJson(decoded);
+    prefs.setString('user', json.encode(
+      user.toMap()
+    ));
   }
 
-  User setToken(String token) => copyWith(token: token);
+  static Future<User> getOffline() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('user')) {
+      final Map decoded = json.decode(prefs.getString('user'));
+      return User.fromJson(decoded);
+    }
 
-  bool isAuth() => this.token.isNotEmpty;
+    return Future.value(null);
+  }
+
+  static void dropOffline() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('user')) {
+      prefs.remove('user');
+    }
+  }
+
+  bool hasToken() => this.token.isNotEmpty;
+
+  String toString() {
+    final Map userMap = toMap();
+    return userMap.toString();
+  }
 }
