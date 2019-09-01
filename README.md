@@ -5,6 +5,17 @@
 
 Una aplicación de flutter que integra un sistema de autenticación basado en JWT.
 
+## Instalación y arranque
+
+Abre un terminal y ejecuta lo siguiente:
+
+```bash
+git clone https://github.com/gregorip02/flutter-jwt-login
+cd flutter-jwt-login
+flutter packages get
+flutter run
+```
+
 ## Empezando
 
 Para este ejemplo desarrollé una app de Express y la desplegué en [heroku](https://backend-jwt.herokuapp.com),
