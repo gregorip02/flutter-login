@@ -7,7 +7,7 @@ import 'package:flutter_jwt_login/views/home.dart';
 class AppLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final AppState state = Provider.of<AppStore>(context).state;
-    return state.isAuth() ? HomeScreen() : AuthScreen();
+    final AppStore store = Provider.of<AppStore>(context);
+    return store.state.isAuth() ? HomeScreen() : AuthScreen();
   }
 }

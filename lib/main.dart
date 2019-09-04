@@ -16,7 +16,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      builder: (context) => AppStore(state),
+      builder: (_) => AppStore(state),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'JWT Auth',

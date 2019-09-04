@@ -1,12 +1,12 @@
 import 'dart:io';
-import 'utils.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_jwt_login/models/user.dart';
+import 'package:flutter_jwt_login/utils.dart' as utils;
 
 class BaseRepository {
-  final String baseUri = getBaseUri();
+  final String baseUri = utils.getBaseUri();
 
   // Los headers enviados por defecto
   final Map<String, String> defaultHeaders = {
@@ -25,7 +25,7 @@ class BaseRepository {
 
 class AuthRepository extends BaseRepository {
   Future<User> auth(String endpoint, Map credentials) async {
-    if (buildMode() != 'release') {
+    if (!utils.inReleaseMode()) {
       // Para mi entorno local, el backend API esta en localhost,
       // así que tendré que hacer una pequeña pausa para
       // simular una petición a Internet.

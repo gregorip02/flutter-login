@@ -20,10 +20,9 @@ class HomeScreen extends StatelessWidget {
         onPressed: () {
           // Drop the user offline credentials
           User.dropOffline();
-          store.setState(
-            // Generate a new state with empty user
-            state.copyWith(user: User())
-          );
+          store.dispatch((AppState state) {
+            return state.copyWith(user: User());
+          });
         }
       )
     );

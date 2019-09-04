@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_jwt_login/utils.dart';
 import 'package:flutter_jwt_login/state.dart';
 import 'package:flutter_jwt_login/repository.dart';
+import 'package:flutter_jwt_login/utils.dart' as utils;
 
 class AuthScreen extends StatefulWidget {
+  // Una llave global para asignarla al estado de
+  // nuestro widget Form
+  // @var GlobalKey
+  final _formKey = GlobalKey<FormState>();
+
   @override
   _AuthScreenState createState() => _AuthScreenState();
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  // Una llave global para asignarla al estado de
-  // nuestro widget Form
-  // @var GlobalKey
-  final _formKey = GlobalKey<FormState>();
 
   // Indicador de progreso en peticiones al servidor
   // @var bool
@@ -31,7 +32,7 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   initState() {
     super.initState();
-    if (buildMode() != 'release') {
+    if (!utils.inReleaseMode()) {
       // En ambientes de desarrollo es conveniente tener
       // algunos datos pre-definidos para no escribirlos
       // cada vez que hacemos un hot-relead ;)
@@ -56,7 +57,7 @@ class _AuthScreenState extends State<AuthScreen> {
   // Cambia el valor del segmentedControl
   // @param String val
   void _changeCupertinoSegmentedControlValue(String val) {
-    _formKey.currentState.reset();
+    widget._formKey.currentState.reset();
     setState(() => _cupertinoSegmentedControlValue = val );
   }
 
@@ -80,7 +81,7 @@ class _AuthScreenState extends State<AuthScreen> {
         readOnly: _progressAuth,
         keyboardType: TextInputType.emailAddress,
         initialValue: _formValues['email'],
-        validator: (val) => validateEmail(val), // See utils.dart
+        validator: (val) => utils.validateEmail(val), // See utils.dart
         onSaved: (val) => _setFormValue('email', val),
         decoration: InputDecoration(
           border: OutlineInputBorder(),
@@ -94,7 +95,7 @@ class _AuthScreenState extends State<AuthScreen> {
         obscureText: true,
         readOnly: _progressAuth,
         initialValue: _formValues['password'],
-        validator: (val) => moreThan(6, val.length),
+        validator: (val) => utils.moreThan(6, val.length),
         onSaved: (val) => _setFormValue('password', val),
         decoration: InputDecoration(
           border: OutlineInputBorder(),
@@ -119,7 +120,7 @@ class _AuthScreenState extends State<AuthScreen> {
           keyboardType: TextInputType.text,
           initialValue: _formValues['name'],
           readOnly: _progressAuth,
-          validator: (val) => moreThan(6, val.length),
+          validator: (val) => utils.moreThan(6, val.length),
           onSaved: (val) => _setFormValue('name', val),
           decoration: InputDecoration(
             border: OutlineInputBorder(),
@@ -194,8 +195,8 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   void _onSubmitPressed(BuildContext context) {
-    if (_formKey.currentState.validate()) {
-      _formKey.currentState.save();
+    if (widget._formKey.currentState.validate()) {
+      widget._formKey.currentState.save();
       final AuthRepository repository = AuthRepository();
       final AppStore store = Provider.of<AppStore>(context);
 
@@ -204,10 +205,9 @@ class _AuthScreenState extends State<AuthScreen> {
         _cupertinoSegmentedControlValue,
         _formValues
       ).then((user) {
-        store.setState(
-          // Add a new user to state
-          store.state.copyWith(user: user)
-        );
+        store.dispatch((AppState state) {
+          return state.withUser(user);
+        });
       }).catchError((err) {
         _showErrorDialog(context, err.toString());
       },
@@ -256,7 +256,7 @@ class _AuthScreenState extends State<AuthScreen> {
             _headerLoginContainer(),
             Expanded(
               child: Form(
-                key: _formKey,
+                key: widget._formKey,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: _showLoginOrRegisterInputs()

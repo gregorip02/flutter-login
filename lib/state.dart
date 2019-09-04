@@ -5,7 +5,7 @@ import 'package:flutter/material.dart' show ChangeNotifier;
 class AppState {
   final User user;
 
-  AppState({ this.user });
+  const AppState({ this.user });
 
   AppState copyWith({ User user }) {
     return AppState(
@@ -14,11 +14,12 @@ class AppState {
   }
 
   static Future<AppState> initState() async {
-    final User user = await User.getOffline();
     return AppState(
-      user: user
+      user: await User.getOffline()
     );
   }
+
+  AppState withUser(User user) => copyWith(user: user);
 
   bool hasUser() => user.runtimeType == User;
   bool isAuth() => hasUser() ? user.hasToken() : false;
@@ -26,6 +27,7 @@ class AppState {
 
 abstract class Store {
   void setState(AppState state);
+  void dispatch(Function callback);
 }
 
 class AppStore with ChangeNotifier implements Store {
@@ -36,5 +38,11 @@ class AppStore with ChangeNotifier implements Store {
   void setState(AppState state) {
     this.state = state;
     notifyListeners();
+  }
+
+  @override
+  void dispatch(Function callback) async {
+    final AppState s = await callback(state);
+    setState(s);
   }
 }
