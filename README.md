@@ -1,8 +1,5 @@
 # JWT Login
 
-> Please contribute and help Venezuelan programmers:
-> [donate $5](https://paypal.me/gregorip02?locale.x=es_XC)
-
 Una aplicación de flutter que integra un sistema de autenticación basado en JWT.
 
 ## Instalación y arranque
@@ -41,6 +38,3 @@ String getBaseUri() =>
 <img src="./images/screenshots/Screenshot_1567560178.png" width="400px">
 <img src="./images/screenshots/Screenshot_1567560181.png" width="400px">
 <img src="./images/screenshots/Screenshot_1567560191.png" width="400px">
-
-> Please contribute and help Venezuelan programmers:
-> [donate $5](https://paypal.me/gregorip02?locale.x=es_XC)
