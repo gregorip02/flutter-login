@@ -7,8 +7,8 @@ Una aplicación de flutter que integra un sistema de autenticación basado en JW
 Abre un terminal y ejecuta lo siguiente:
 
 ```bash
-git clone https://github.com/gregorip02/flutter-jwt-login
-cd flutter-jwt-login
+git clone --depth 1 https://github.com/gregorip02/flutter-login.git
+cd flutter-login
 flutter packages get
 flutter run
 ```
